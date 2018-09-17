@@ -2,9 +2,9 @@
 /*
 Plugin Name: SQLSearchWP CasJobs
 Plugin URI: http://www.voyages.sdss.org
-Description: Query SDSS MSSQL DB
+Description: Query Casjobs
 Version: 1.0.0
-Author: Bonnie Souter
+Author: Bonnie Souter, William Harrington
 Author URI: https://github.com/bonbons0220
 License: MIT
 */
@@ -17,7 +17,7 @@ define( 'SQLS_DIR_URL' , plugin_dir_url( __FILE__ ) );
 define( 'SQLS_DEVELOP' , TRUE );
 
 // load the class file
-require_once( SQLS_DIR_PATH . 'lib/sqlsearchwp.php' );
+require_once( SQLS_DIR_PATH . 'lib/sqlsearchwp-casjobs.php' );
 
 // Let's roll!
 sqlswp_plugin();

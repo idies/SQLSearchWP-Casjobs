@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: SQLSearchWP Core Plugin
+Plugin Name: SQLSearchWP Casjobs
 Plugin URI: http://www.voyages.sdss.org
-Description: Query SDSS MSSQL DB
+Description: Query Casjobs
 Version: 1.0.0
-Author: Bonnie Souter
+Author: Bonnie Souter, William Harrington
 Author URI: https://github.com/bonbons0220
 License: MIT
 */
@@ -55,7 +55,7 @@ final class SQLSearchWP {
 		add_action( 'wp_enqueue_scripts', array( $this , 'register_sqlswp_script' ) );
 		
 		//Add Shortcodes
-		add_shortcode( 'sqlsearchwp' , array( $this , 'sqlsearchwp_shortcode' ) );
+		add_shortcode( 'sqlsearchwp-casjobs' , array( $this , 'sqlsearchwp_shortcode' ) );
 		
 		//Add page(s) to the Admin Menu
 		add_action( 'admin_menu' , array( $this , 'sqls_menu' ) );
