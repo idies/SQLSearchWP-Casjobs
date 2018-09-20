@@ -103,7 +103,7 @@ final class SQLSearchWP {
 		$webroot = $this->dir_uri;
 		
 		$which = ( !empty( $atts) && array_key_exists( 'form' , $atts ) && 
-			in_array( $atts['form'] , $this->whichs ) ) ? $atts['form'] : $this->whichs[0] ; 
+			in_array( $atts['form'] , $this->whichs ) ) ? $atts['form'] : $this->whichs[3] ; 
 		$display = ( !empty( $atts) && array_key_exists( 'display' , $atts ) && 
 			in_array( $atts['display'] , $this->displays ) ) ? $atts['display'] : $this->displays[0] ; 
 		
@@ -123,7 +123,6 @@ final class SQLSearchWP {
 	 * Generate HTML for this form
 	 */
 	public function getForm( $which , $display , $webroot ) {
-
 		//Content 
 		$result = '<div id="sqls-container" class="sqls-wrap" data-sqls-webroot="' . $webroot . '" data-sqls-which="' . $which . '" data-sqls-display="' . $display . '" >';
 		
@@ -186,7 +185,8 @@ final class SQLSearchWP {
 		$this->whichs=array( 
 			'test' , 
 			'freeform' , 
-			'searchform' 
+			'searchform',
+			'dr14'
 		);
 		$this->displays=array( 
 			'div' , 

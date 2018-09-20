@@ -1722,9 +1722,21 @@
 		whichs: [
 			'test',
 			'freeform',
-			'searchform'
+			'searchform',
+			'dr14'
 		],
-		
+		targets: {
+		dr14:{
+		    url:"https://skyserver.sdss.org/casjobs/RestAPI/contexts/mpcorb/query",
+		    ContentType:"application/json",
+		    type: "POST",
+		    data:{"Query":"","Accept":"application/xml"},
+		    success: function (data) {
+			sqlsearchwp.showResults( data , false , true );
+		    },
+		    //,processData: false
+		}
+		},
 		query: { 
 			test: 
 				'SELECT TOP 10 '+
@@ -1747,7 +1759,10 @@
 			// get base url of files, test or prod query, target query location, and how to show results.
 			var webroot = $( sqlsearchwp.context ).data('sqls-webroot');
 			var which = $( sqlsearchwp.context ).data('sqls-which');
+			var target = sqlsearchwp.targets[which]
 			
+			//initialize query to be default text
+			target.data["Query"] = $('#sqls-query').text();
 			// Show the Search Page
 			//this.showMessage( 'Welcome' , 'Please enjoy this form.' , 'info' , false );
 			this.showInstructions( webroot+"includes/" );
@@ -1759,7 +1774,8 @@
 			$( sqlsearchwp.context ).on( "submit" , "form#sqls-searchform" , function( e ){ e.preventDefault(); });
 			
 			// Add (delegated) click event handlers to buttons
-			$( sqlsearchwp.context ).on( "click" , "#sqls-submit" , sqlsearchwp.doSubmit );
+			//$( sqlsearchwp.context ).on( "click" , "#sqls-submit" , sqlsearchwp.doSubmit );
+			$( sqlsearchwp.context ).on( "click" , "#sqls-submit" , { target:target , which:which } , sqlsearchwp.doSubmit );
 			$( sqlsearchwp.context ).on( "click" , "#sqls-syntax" , sqlsearchwp.doSyntax );
 			$( sqlsearchwp.context ).on( "click" , "#sqls-reset" , sqlsearchwp.doReset );
 			if ( which ==="searchform" ) {
@@ -1860,8 +1876,21 @@
 			var display = $( sqlsearchwp.context ).data('sqls-display');
 			var _query = e.currentTarget.dataset.sqlsSubmitto +
 				encodeURI( $( '#sqls-query' ).val() );
+
+			var query = e.data.target.data["Query"];
+			var target = e.data.target;
+			var which = e.data.which;
+
+			if ( which === 'dr14' ) {
+			    console.log(query);
+			    
+			    target.data = {"Query":query};
+			    //if (SSSWPDEBUG) { console.log( target ); }
+			    $.ajax( target );
+			    
+			}
 			
-			if ( display === 'div' ) {				
+			if ( display === 'div' && false) {				
 				//send query from form to skyserverws and listen for return
 				var xhttp;
 				xhttp = new XMLHttpRequest();
@@ -1877,7 +1906,7 @@
 				};
 				xhttp.open("GET", _query , true);
 				xhttp.send();
-			} else if ( display === 'iframe' ) {
+			} else if ( display === 'iframe' && false) {
 				sqlsearchwp.showResults( '' , false , true);
 				$('#sqls-results').append('<div class="embed-responsive embed-responsive-4by3"><iframe  class="embed-responsive-item" src="' + _query + '" name="sqls-iframe" id="sqls-iframe"></iframe></div>');
 				sqlsearchwp.showForm( '' , true , false );
