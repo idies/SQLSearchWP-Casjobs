@@ -1727,17 +1727,16 @@
 		],
 		targets: {
 		dr14:{
-		    url:"https://skyserver.sdss.org/casjobs/RestAPI/contexts/mpcorb/query",
+		    url:"https://skyserver.sdss.org/casjobs/RestAPI/contexts/dr14/query",
 		    ContentType:"application/json",
 		    type: "POST",
 		    data:{"Query":"","Accept":"application/xml"},
 		    success: function (data) {
 			sqlsearchwp.showResults( data , false , true );
 		    },
-		    //,processData: false
 		}
 		},
-		query: { 
+		/*query: { 
 			test: 
 				'SELECT TOP 10 '+
 				'p.objid,p.ra,p.dec,p.u,p.g,p.r,p.i,p.z, '+
@@ -1750,7 +1749,7 @@
 				'p.u BETWEEN 0 AND 19.6 '+
 			'AND g BETWEEN 0 AND 20' ,
 			prod: ''
-			},
+			},*/
 			
 		init: function(  ){
 						
@@ -1762,7 +1761,7 @@
 			var target = sqlsearchwp.targets[which]
 			
 			//initialize query to be default text
-			target.data["Query"] = $('#sqls-query').text();
+			target.data["Query"] = "SELECT TOP 10 p.objid,p.ra,p.dec,p.u,p.g,p.r,p.i,p.z,p.run, p.rerun, p.camcol, p.field, s.specobjid, s.class, s.z as redshift,s.plate, s.mjd, s.fiberid FROM PhotoObj AS p JOIN SpecObj AS s ON s.bestobjid = p.objid WHERE p.u BETWEEN 0 AND 19.6 AND g BETWEEN 0 AND 20";
 			// Show the Search Page
 			//this.showMessage( 'Welcome' , 'Please enjoy this form.' , 'info' , false );
 			this.showInstructions( webroot+"includes/" );
@@ -1775,10 +1774,11 @@
 			
 			// Add (delegated) click event handlers to buttons
 			//$( sqlsearchwp.context ).on( "click" , "#sqls-submit" , sqlsearchwp.doSubmit );
+			$("#sqls-query").on('input', sqlsearchwp.doQueryUpdate);
 			$( sqlsearchwp.context ).on( "click" , "#sqls-submit" , { target:target , which:which } , sqlsearchwp.doSubmit );
 			$( sqlsearchwp.context ).on( "click" , "#sqls-syntax" , sqlsearchwp.doSyntax );
 			$( sqlsearchwp.context ).on( "click" , "#sqls-reset" , sqlsearchwp.doReset );
-			if ( which ==="searchform" ) {
+			/*if ( which ==="searchform" ) {
 				$( sqlsearchwp.context ).on( "click" , "#sqls-images" , sqlsearchwp.doSubmit );
 				$( sqlsearchwp.context ).on( "change" , "#sqls-inregion" , sqlsearchwp.toggleFootprint );
 				$( sqlsearchwp.context ).on( "change" , "#sqls-forobjects" , sqlsearchwp.toggleRedshifts );
@@ -1786,9 +1786,22 @@
 				$( sqlsearchwp.context ).on( "click" , "#sqls-generate" , sqlsearchwp.doGenerate );
 				$( 'form#sqls-searchform' ).on( "change" , "select" , sqlsearchwp.doUpdate );
 				$( 'form#sqls-searchform' ).on( "change" , "input" , sqlsearchwp.doUpdate );
-			}
+				}*/
 			
 		},
+
+		/**
+		 *@summary Update the inner html of the query textarea with what the user enters
+		 *
+		 *@param Object e Event Object
+		 **/
+		doQueryUpdate: function(e) {
+		
+                   var textValue = e.target.value;
+		   document.getElementById("sqls-query").innerHTML = textValue;
+		   sqlsearchwp.targets.dr14.data["Query"] = textValue;
+
+	        },
 		
 		/**
 		 * @summary Toggle the Reshifts form
@@ -1873,24 +1886,40 @@
 		doSubmit: function( e ) {
 			
 			// Get target db from form data
-			var display = $( sqlsearchwp.context ).data('sqls-display');
-			var _query = e.currentTarget.dataset.sqlsSubmitto +
-				encodeURI( $( '#sqls-query' ).val() );
+		
+			//var display = $( sqlsearchwp.context ).data('sqls-display');
+			//var _query = e.currentTarget.dataset.sqlsSubmitto +
+			//encodeURI( $( '#sqls-query' ).val() );
 
 			var query = e.data.target.data["Query"];
 			var target = e.data.target;
 			var which = e.data.which;
 
 			if ( which === 'dr14' ) {
-			    console.log(query);
-			    
 			    target.data = {"Query":query};
-			    //if (SSSWPDEBUG) { console.log( target ); }
 			    $.ajax( target );
 			    
 			}
+			else {
+			    
+			    //send query from form to skyserverws and listen for return
+			    var xhttp;
+			    xhttp = new XMLHttpRequest();
+			    xhttp.onreadystatechange = function() {
+				if (this.readyState === 4 && this.status === 200) {
+				    var response = this.responseText;
+				    response = response.replace(/.*<body.*?>/i , "");
+				    response = response.replace(/<\/body.*/i , "");
+
+				    sqlsearchwp.showResults( response , false , true );
+				    sqlsearchwp.showForm( '' , true , false );
+				}
+			    };
+			    xhttp.open("GET", query , true);
+			    xhttp.send();
+			}
 			
-			if ( display === 'div' && false) {				
+			/*if ( display === 'div' && false) {				
 				//send query from form to skyserverws and listen for return
 				var xhttp;
 				xhttp = new XMLHttpRequest();
@@ -1898,7 +1927,7 @@
 					if (this.readyState === 4 && this.status === 200) {
 						var response = this.responseText;
 						response = response.replace(/.*<body.*?>/i , "");
-						response = response.replace(/<\/body.*/i , "");
+						response = response.replace(/<\/body.*//*i , "");
 
 						sqlsearchwp.showResults( response , false , true );
 						sqlsearchwp.showForm( '' , true , false );
@@ -1912,7 +1941,7 @@
 				sqlsearchwp.showForm( '' , true , false );
 			} else {
 				console.log( "Display type not supported: " + display + "." );
-			}
+			}*/
 			
 		},
 		
@@ -2192,7 +2221,7 @@
 			
 			//var _query = sqlsearchwp.query[ $( context ).data('sqls-which') ];
 			
-			$( '#sqls-query' ).prop( 'value' , sqlsearchwp.query[ $( context ).data('sqls-which') ] );
+			//$( '#sqls-query' ).prop( 'value' , sqlsearchwp.query[ $( context ).data('sqls-which') ] );
 			sqlsearchwp.doCollapse( '#sqls-form-wrap>h2>a[data-toggle]', container, show );
 			
 		},
