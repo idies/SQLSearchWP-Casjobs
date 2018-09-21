@@ -1732,7 +1732,7 @@
 		    type: "POST",
 		    data:{"Query":"","Accept":"application/xml"},
 		    success: function (data) {
-			sqlsearchwp.showResults( data , false , true );
+			sqlsearchwp.showResults( data , false , true, true );
 		    },
 		}
 		},
@@ -1911,7 +1911,7 @@
 				    response = response.replace(/.*<body.*?>/i , "");
 				    response = response.replace(/<\/body.*/i , "");
 
-				    sqlsearchwp.showResults( response , false , true );
+				    sqlsearchwp.showResults( response , false , true, true );
 				    sqlsearchwp.showForm( '' , true , false );
 				}
 			    };
@@ -2118,7 +2118,7 @@
 				xhttp.onreadystatechange = function() {
 					if (this.readyState === 4 && this.status === 200) {
 						var response = this.responseText;
-						sqlsearchwp.showResults( response , false , true );
+						sqlsearchwp.showResults( response , false , true, false );
 					}
 				};
 				xhttp.open("GET", _query, true);
@@ -2126,7 +2126,7 @@
 				
 			} else if ( display === 'iframe' ) {
 				
-				sqlsearchwp.showResults( '' , false , true);
+			    sqlsearchwp.showResults( '' , false , true, false);
 				$('#sqls-results').append('<div class="embed-responsive embed-responsive-4by3"><iframe  class="embed-responsive-item" src="' + _query + '" name="sqls-iframe" id="sqls-iframe"></iframe></div>');
 				sqlsearchwp.showForm( '' , true , false );
 				
@@ -2232,15 +2232,43 @@
 		 * @param String $results Results to display
 		 * @param Boolean $append Append or replace current message(s)
 		**/
-		showResults: function( results , append , show ) {
+		showResults: function( results , append , show, format ) {
 			var container = $( '#sqls-results' );
 
 			var contents = ( append !== undefined && append ) ? $(container).html() : '' ;
 			
 			contents += ( results !== undefined ) ? results : '' ;
-			$(container).html( contents );
+			if (format) {
+			    $(container).html( sqlsearchwp.formatResults(contents) );
+			} else {
+			    $(container).html(contents);
+			}
 			sqlsearchwp.doCollapse( '#sqls-results-wrap>h2>a[data-toggle]', container, show );
 		},
+
+		formatResults: function(data) {
+		        var output = '<table style="width:100%" class="table-bordered table-responsive">';
+		        var lines = data.split('\n');
+			for(var i = 0; i < lines.length; i++) {
+			    output += '<tr>';
+			    var items = lines[i].split(',');
+			    var symbolBegin = '<td>';
+			    var symbolEnd = '</td>';
+			    if (i == 0) {
+				symbolBegin = '<th>';
+				symbolEnd = '</th>';
+			    }
+			    for (var x = 0; x < items.length; x++) {
+				output += symbolBegin;
+				output += items[x];
+				output += symbolEnd;
+			    }
+			    output += '</tr>';
+			}
+			output += '</table>';
+			return output;
+			
+	        }
 	};
 
 	$(document).ready( function(  ) {
