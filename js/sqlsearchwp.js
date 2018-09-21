@@ -1774,6 +1774,7 @@
 			
 			// Add (delegated) click event handlers to buttons
 			//$( sqlsearchwp.context ).on( "click" , "#sqls-submit" , sqlsearchwp.doSubmit );
+			$("#sqls-edit").on('click', sqlsearchwp.enableQuery);
 			$("#sqls-query").on('input', sqlsearchwp.doQueryUpdate);
 			$( sqlsearchwp.context ).on( "click" , "#sqls-submit" , { target:target , which:which } , sqlsearchwp.doSubmit );
 			$( sqlsearchwp.context ).on( "click" , "#sqls-syntax" , sqlsearchwp.doSyntax );
@@ -1789,6 +1790,17 @@
 				}*/
 			
 		},
+
+		enableQuery: function(e) {
+		if(e.currentTarget.dataset.unlock == "yes") {
+		    $("#sqls-query").prop("disabled", false);
+		    e.currentTarget.dataset.unlock = "no";
+		}
+		else {
+		    $("#sqls-query").prop("disabled", true);
+		    e.currentTarget.dataset.unlock = "yes";
+		}
+	        },
 
 		/**
 		 *@summary Update the inner html of the query textarea with what the user enters
