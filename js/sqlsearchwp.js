@@ -2259,7 +2259,7 @@
 		},
 
 		formatResults: function(data) {
-		        var output = '<table style="width:100%" class="table-bordered table-responsive">';
+		        var output = '<pre><table class="table-bordered table-responsive">';
 		        var lines = data.split('\n');
 			for(var i = 0; i < lines.length; i++) {
 			    output += '<tr>';
@@ -2277,7 +2277,7 @@
 			    }
 			    output += '</tr>';
 			}
-			output += '</table>';
+			output += '</table></pre>';
 			return output;
 			
 	        }
