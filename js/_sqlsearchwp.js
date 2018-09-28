@@ -36,10 +36,21 @@
 		whichs: [
 			'test',
 			'freeform',
-			'searchform'
+			'searchform',
+			'dr14'
 		],
-		
-		query: { 
+		targets: {
+		dr14:{
+		    url:"https://skyserver.sdss.org/casjobs/RestAPI/contexts/dr14/query",
+		    ContentType:"application/json",
+		    type: "POST",
+		    data:{"Query":"","Accept":"application/xml"},
+		    success: function (data) {
+			sqlsearchwp.showResults( data , false , true, true );
+		    },
+		}
+		},
+		/*query: { 
 			test: 
 				'SELECT TOP 10 '+
 				'p.objid,p.ra,p.dec,p.u,p.g,p.r,p.i,p.z, '+
@@ -52,7 +63,7 @@
 				'p.u BETWEEN 0 AND 19.6 '+
 			'AND g BETWEEN 0 AND 20' ,
 			prod: ''
-			},
+			},*/
 			
 		init: function(  ){
 						
@@ -61,7 +72,10 @@
 			// get base url of files, test or prod query, target query location, and how to show results.
 			var webroot = $( sqlsearchwp.context ).data('sqls-webroot');
 			var which = $( sqlsearchwp.context ).data('sqls-which');
+			var target = sqlsearchwp.targets[which];
 			
+			//initialize query to be default text
+			target.data.Query = "SELECT TOP 10 p.objid,p.ra,p.dec,p.u,p.g,p.r,p.i,p.z,p.run, p.rerun, p.camcol, p.field, s.specobjid, s.class, s.z as redshift,s.plate, s.mjd, s.fiberid FROM PhotoObj AS p JOIN SpecObj AS s ON s.bestobjid = p.objid WHERE p.u BETWEEN 0 AND 19.6 AND g BETWEEN 0 AND 20";
 			// Show the Search Page
 			//this.showMessage( 'Welcome' , 'Please enjoy this form.' , 'info' , false );
 			this.showInstructions( webroot+"includes/" );
@@ -73,10 +87,13 @@
 			$( sqlsearchwp.context ).on( "submit" , "form#sqls-searchform" , function( e ){ e.preventDefault(); });
 			
 			// Add (delegated) click event handlers to buttons
-			$( sqlsearchwp.context ).on( "click" , "#sqls-submit" , sqlsearchwp.doSubmit );
+			//$( sqlsearchwp.context ).on( "click" , "#sqls-submit" , sqlsearchwp.doSubmit );
+			$("#sqls-edit").on('click', sqlsearchwp.enableQuery);
+			$("#sqls-query").on('input', sqlsearchwp.doQueryUpdate);
+			$( sqlsearchwp.context ).on( "click" , "#sqls-submit" , { target:target , which:which } , sqlsearchwp.doSubmit );
 			$( sqlsearchwp.context ).on( "click" , "#sqls-syntax" , sqlsearchwp.doSyntax );
 			$( sqlsearchwp.context ).on( "click" , "#sqls-reset" , sqlsearchwp.doReset );
-			if ( which ==="searchform" ) {
+			/*if ( which ==="searchform" ) {
 				$( sqlsearchwp.context ).on( "click" , "#sqls-images" , sqlsearchwp.doSubmit );
 				$( sqlsearchwp.context ).on( "change" , "#sqls-inregion" , sqlsearchwp.toggleFootprint );
 				$( sqlsearchwp.context ).on( "change" , "#sqls-forobjects" , sqlsearchwp.toggleRedshifts );
@@ -84,9 +101,33 @@
 				$( sqlsearchwp.context ).on( "click" , "#sqls-generate" , sqlsearchwp.doGenerate );
 				$( 'form#sqls-searchform' ).on( "change" , "select" , sqlsearchwp.doUpdate );
 				$( 'form#sqls-searchform' ).on( "change" , "input" , sqlsearchwp.doUpdate );
-			}
+				}*/
 			
 		},
+
+		enableQuery: function(e) {
+		if(e.currentTarget.dataset.unlock === "yes") {
+		    $("#sqls-query").prop("disabled", false);
+		    e.currentTarget.dataset.unlock = "no";
+		}
+		else {
+		    $("#sqls-query").prop("disabled", true);
+		    e.currentTarget.dataset.unlock = "yes";
+		}
+	        },
+
+		/**
+		 *@summary Update the inner html of the query textarea with what the user enters
+		 *
+		 *@param Object e Event Object
+		 **/
+		doQueryUpdate: function(e) {
+		
+                   var textValue = e.target.value;
+		   document.getElementById("sqls-query").innerHTML = textValue;
+		   sqlsearchwp.targets.dr14.data.Query = textValue;
+
+	        },
 		
 		/**
 		 * @summary Toggle the Reshifts form
@@ -171,11 +212,40 @@
 		doSubmit: function( e ) {
 			
 			// Get target db from form data
-			var display = $( sqlsearchwp.context ).data('sqls-display');
-			var _query = e.currentTarget.dataset.sqlsSubmitto +
-				encodeURI( $( '#sqls-query' ).val() );
+		
+			//var display = $( sqlsearchwp.context ).data('sqls-display');
+			//var _query = e.currentTarget.dataset.sqlsSubmitto +
+			//encodeURI( $( '#sqls-query' ).val() );
+
+			var query = e.data.target.data.Query;
+			var target = e.data.target;
+			var which = e.data.which;
+
+			if ( which === 'dr14' ) {
+			    target.data = {"Query":query};
+			    $.ajax( target );
+			    
+			}
+			else {
+			    
+			    //send query from form to skyserverws and listen for return
+			    var xhttp;
+			    xhttp = new XMLHttpRequest();
+			    xhttp.onreadystatechange = function() {
+				if (this.readyState === 4 && this.status === 200) {
+				    var response = this.responseText;
+				    response = response.replace(/.*<body.*?>/i , "");
+				    response = response.replace(/<\/body.*/i , "");
+
+				    sqlsearchwp.showResults( response , false , true, true );
+				    sqlsearchwp.showForm( '' , true , false );
+				}
+			    };
+			    xhttp.open("GET", query , true);
+			    xhttp.send();
+			}
 			
-			if ( display === 'div' ) {				
+			/*if ( display === 'div' && false) {				
 				//send query from form to skyserverws and listen for return
 				var xhttp;
 				xhttp = new XMLHttpRequest();
@@ -183,21 +253,20 @@
 					if (this.readyState === 4 && this.status === 200) {
 						var response = this.responseText;
 						response = response.replace(/.*<body.*?>/i , "");
-						response = response.replace(/<\/body.*/i , "");
-
+						response = response.replace(/<\/body.*//*i , "");
 						sqlsearchwp.showResults( response , false , true );
 						sqlsearchwp.showForm( '' , true , false );
 					}
 				};
 				xhttp.open("GET", _query , true);
 				xhttp.send();
-			} else if ( display === 'iframe' ) {
+			} else if ( display === 'iframe' && false) {
 				sqlsearchwp.showResults( '' , false , true);
 				$('#sqls-results').append('<div class="embed-responsive embed-responsive-4by3"><iframe  class="embed-responsive-item" src="' + _query + '" name="sqls-iframe" id="sqls-iframe"></iframe></div>');
 				sqlsearchwp.showForm( '' , true , false );
 			} else {
 				console.log( "Display type not supported: " + display + "." );
-			}
+			}*/
 			
 		},
 		
@@ -374,7 +443,7 @@
 				xhttp.onreadystatechange = function() {
 					if (this.readyState === 4 && this.status === 200) {
 						var response = this.responseText;
-						sqlsearchwp.showResults( response , false , true );
+						sqlsearchwp.showResults( response , false , true, false );
 					}
 				};
 				xhttp.open("GET", _query, true);
@@ -382,7 +451,7 @@
 				
 			} else if ( display === 'iframe' ) {
 				
-				sqlsearchwp.showResults( '' , false , true);
+			    sqlsearchwp.showResults( '' , false , true, false);
 				$('#sqls-results').append('<div class="embed-responsive embed-responsive-4by3"><iframe  class="embed-responsive-item" src="' + _query + '" name="sqls-iframe" id="sqls-iframe"></iframe></div>');
 				sqlsearchwp.showForm( '' , true , false );
 				
@@ -477,7 +546,7 @@
 			
 			//var _query = sqlsearchwp.query[ $( context ).data('sqls-which') ];
 			
-			$( '#sqls-query' ).prop( 'value' , sqlsearchwp.query[ $( context ).data('sqls-which') ] );
+			//$( '#sqls-query' ).prop( 'value' , sqlsearchwp.query[ $( context ).data('sqls-which') ] );
 			sqlsearchwp.doCollapse( '#sqls-form-wrap>h2>a[data-toggle]', container, show );
 			
 		},
@@ -488,15 +557,43 @@
 		 * @param String $results Results to display
 		 * @param Boolean $append Append or replace current message(s)
 		**/
-		showResults: function( results , append , show ) {
+		showResults: function( results , append , show, format ) {
 			var container = $( '#sqls-results' );
 
 			var contents = ( append !== undefined && append ) ? $(container).html() : '' ;
 			
 			contents += ( results !== undefined ) ? results : '' ;
-			$(container).html( contents );
+			if (format) {
+			    $(container).html( sqlsearchwp.formatResults(contents) );
+			} else {
+			    $(container).html(contents);
+			}
 			sqlsearchwp.doCollapse( '#sqls-results-wrap>h2>a[data-toggle]', container, show );
 		},
+
+		formatResults: function(data) {
+		        var output = '<pre><table class="table-bordered table-responsive">';
+		        var lines = data.split('\n');
+			for(var i = 0; i < lines.length; i++) {
+			    output += '<tr>';
+			    var items = lines[i].split(',');
+			    var symbolBegin = '<td>';
+			    var symbolEnd = '</td>';
+			    if (i === 0) {
+				symbolBegin = '<th>';
+				symbolEnd = '</th>';
+			    }
+			    for (var x = 0; x < items.length; x++) {
+				output += symbolBegin;
+				output += items[x];
+				output += symbolEnd;
+			    }
+			    output += '</tr>';
+			}
+			output += '</table></pre>';
+			return output;
+			
+	        }
 	};
 
 	$(document).ready( function(  ) {

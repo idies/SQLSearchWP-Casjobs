@@ -1,4 +1,4 @@
-/*! sqlsearchwp - v1.0.0 - by:1.0.0 - license: - 2017-09-22 */+function ($) {
+/*! sqlsearchwp - v1.0.0 - by:1.0.0 - license: - 2018-09-28 */+function ($) {
   'use strict';
 
   // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
@@ -1758,10 +1758,10 @@
 			// get base url of files, test or prod query, target query location, and how to show results.
 			var webroot = $( sqlsearchwp.context ).data('sqls-webroot');
 			var which = $( sqlsearchwp.context ).data('sqls-which');
-			var target = sqlsearchwp.targets[which]
+			var target = sqlsearchwp.targets[which];
 			
 			//initialize query to be default text
-			target.data["Query"] = "SELECT TOP 10 p.objid,p.ra,p.dec,p.u,p.g,p.r,p.i,p.z,p.run, p.rerun, p.camcol, p.field, s.specobjid, s.class, s.z as redshift,s.plate, s.mjd, s.fiberid FROM PhotoObj AS p JOIN SpecObj AS s ON s.bestobjid = p.objid WHERE p.u BETWEEN 0 AND 19.6 AND g BETWEEN 0 AND 20";
+			target.data.Query = "SELECT TOP 10 p.objid,p.ra,p.dec,p.u,p.g,p.r,p.i,p.z,p.run, p.rerun, p.camcol, p.field, s.specobjid, s.class, s.z as redshift,s.plate, s.mjd, s.fiberid FROM PhotoObj AS p JOIN SpecObj AS s ON s.bestobjid = p.objid WHERE p.u BETWEEN 0 AND 19.6 AND g BETWEEN 0 AND 20";
 			// Show the Search Page
 			//this.showMessage( 'Welcome' , 'Please enjoy this form.' , 'info' , false );
 			this.showInstructions( webroot+"includes/" );
@@ -1792,7 +1792,7 @@
 		},
 
 		enableQuery: function(e) {
-		if(e.currentTarget.dataset.unlock == "yes") {
+		if(e.currentTarget.dataset.unlock === "yes") {
 		    $("#sqls-query").prop("disabled", false);
 		    e.currentTarget.dataset.unlock = "no";
 		}
@@ -1811,7 +1811,7 @@
 		
                    var textValue = e.target.value;
 		   document.getElementById("sqls-query").innerHTML = textValue;
-		   sqlsearchwp.targets.dr14.data["Query"] = textValue;
+		   sqlsearchwp.targets.dr14.data.Query = textValue;
 
 	        },
 		
@@ -1903,7 +1903,7 @@
 			//var _query = e.currentTarget.dataset.sqlsSubmitto +
 			//encodeURI( $( '#sqls-query' ).val() );
 
-			var query = e.data.target.data["Query"];
+			var query = e.data.target.data.Query;
 			var target = e.data.target;
 			var which = e.data.which;
 
@@ -2265,7 +2265,7 @@
 			    var items = lines[i].split(',');
 			    var symbolBegin = '<td>';
 			    var symbolEnd = '</td>';
-			    if (i == 0) {
+			    if (i === 0) {
 				symbolBegin = '<th>';
 				symbolEnd = '</th>';
 			    }

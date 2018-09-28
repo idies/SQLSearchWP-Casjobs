@@ -6,6 +6,18 @@
 // Core variables and mixins
 @import "../vendor/bootstrap/less/bootstrap.less";
 
+@brand-secondary:         		   darken(#87CEEB, 10%);
+
+@btn-secondary-color:              #fff;
+@btn-secondary-bg:                 @brand-secondary;
+@btn-secondary-border:             darken(@btn-secondary-bg, 5%);
+
+@brand-tertiary:         		   darken(#8A2BE2, 10%);
+
+@btn-tertiary-color:              #fff;
+@btn-tertiary-bg:                 @brand-tertiary;
+@btn-tertiary-border:             darken(@btn-tertiary-bg, 5%);
+
 .sqls-wrap{
 	h2 {
 		.h3;
@@ -40,4 +52,12 @@
 	}
 	.sqls-results{
 	}
+}
+
+.btn-secondary {
+  .button-variant(@btn-secondary-color; @btn-secondary-bg; @btn-secondary-border);
+}
+
+.btn-tertiary {
+  .button-variant(@btn-tertiary-color; @btn-tertiary-bg; @btn-tertiary-border);
 }
