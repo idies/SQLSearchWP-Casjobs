@@ -88,13 +88,20 @@ final class SQLSearchWP {
 	//
 	function register_sqlswp_script() {
 		
-		//Scripts to be Registered, but not enqueued. This example requires jquery 
+		//Scripts to be Registered, but not enqueued. This example requires jquery
+	  if(defined('WP_ENV')) {
+	    if(WP_ENV == 'development') {
 		wp_register_script( 'sqlsearchwp-script', $this->js_uri . "sqlsearchwp.js" , array() , '1.0.0', true );
 		//wp_register_script( 'bootstrap-min', $this->bootstrap_uri . "bootstrap.min.js" , array( 'jquery' ), false , true );
 		//wp_register_script( 'bootstrap', $this->bootstrap_uri . "bootstrap.js" , array( 'jquery' ), false , true );
 		
 		//Styles to be Registered, but not enqueued
 		wp_register_style( 'sqlsearchwp-style', $this->css_uri . "sqlsearchwp.css" );
+	    } else {
+	        wp_register_script( 'sqlsearchwp-script', $this->js_uri . "sqlsearchwp.min.js", array() , '1.0.0', true );
+		wp_register_style( 'sqlsearchwp-style', $this->css_uri . "sqlsearchwp.min.css");
+	    }
+	  }
 		
 	}
 

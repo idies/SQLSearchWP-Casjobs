@@ -1940,7 +1940,6 @@
 						var response = this.responseText;
 						response = response.replace(/.*<body.*?>/i , "");
 						response = response.replace(/<\/body.*//*i , "");
-
 						sqlsearchwp.showResults( response , false , true );
 						sqlsearchwp.showForm( '' , true , false );
 					}

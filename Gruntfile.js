@@ -22,7 +22,7 @@ module.exports = function(grunt) {
     'vendor/bootstrap/js/tab.js',
     //'vendor/bootstrap/js/affix.js',
     //'js/plugins/*.js',
-    'js/_sqlsearchwp.js'
+    'js/sqlsearchwp.js'
   ];
 
   grunt.initConfig({
@@ -34,8 +34,8 @@ module.exports = function(grunt) {
       },
       all: [
         'Gruntfile.js',
-        'js/_sqlsearchwp.js',
-        '!js/sqlsearchwp.js',
+        'js/sqlsearchwp.js',
+        '!js/_sqlsearchwp.js',
         '!**/*.min.*'
       ]
     },
