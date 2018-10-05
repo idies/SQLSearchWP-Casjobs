@@ -37,7 +37,8 @@
 			'test',
 			'freeform',
 			'searchform',
-			'dr14'
+			'dr14',
+			'dr14-secondary'
 		],
 		targets: {
 		dr14:{
@@ -47,7 +48,16 @@
 		    data:{"Query":"","Accept":"application/xml"},
 		    success: function (data) {
 			sqlsearchwp.showResults( data , false , true, true );
-		    },
+		    }
+		},
+		dr14Secondary:{
+		    url:"https://skyserver.sdss.org/casjobs/RestAPI/contexts/dr14/query",
+		    ContentType:"application/json",
+		    type: "POST",
+		    data:{"Query":"","Accept":"application/xml"},
+		    success: function (data) {
+			sqlsearchwp.showResults( data , false , true, true );
+		    }
 		}
 		},
 		/*query: { 
@@ -97,8 +107,8 @@
 			if (uagent.search("iphone") > -1) {
 				document.getElementById('sqls-form').innerHTML = '<table width=50%><tr><td><button id="sqls-edit" name="sqls-edit" class ="sqls-edit btn btn-primary" data-unlock="yes">Edit</button></td><td><button id="sqls-reset" name="sqls-reset" class="sqls-reset btn btn-tertiary">Reset</button></td></tr></table><textarea id="sqls-query" name="cmd" class="sqls-query" data-colnum=60 rows=10 cols=60 disabled>SELECT TOP 10 p.objid,p.ra,p.dec,p.u,p.g,p.r,p.i,p.z,p.run, p.rerun, p.camcol, p.field, s.specobjid, s.class, s.z as redshift,s.plate, s.mjd, s.fiberid FROM PhotoObj AS p JOIN SpecObj AS s ON s.bestobjid = p.objid WHERE p.u BETWEEN 0 AND 19.6 AND g BETWEEN 0 AND 20</textarea><table width=50%><tr>	<td><button id="sqls-submit" name="sqls-submit" class="sqls-submit btn btn-primary">Submit</button></td><td><button id="sqls-syntax" name="sqls-syntax" data-sqls-submitto="http://skyserver.sdss.org/dr14/en/tools/search/x_results.aspx?searchtool=SQL&TaskName=Skyserver.Search.SQL&ReturnHtml=true&format=html&syntax=Syntax&cmd=" class="sqls-syntax btn btn-secondary">Check Syntax</button></td></tr></table>';
 			}*/
-			document.getElementsByTagName("BODY")[0].onresize = sqlsearchwp.doResize;
-			sqlsearchwp.doResize();
+			//document.getElementsByTagName("BODY")[0].onresize = sqlsearchwp.doResize;
+			//sqlsearchwp.doResize();
 				
 			/*if ( which ==="searchform" ) {
 				$( sqlsearchwp.context ).on( "click" , "#sqls-images" , sqlsearchwp.doSubmit );

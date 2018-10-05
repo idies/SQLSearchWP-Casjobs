@@ -110,7 +110,7 @@ final class SQLSearchWP {
 		$webroot = $this->dir_uri;
 		
 		$which = ( !empty( $atts) && array_key_exists( 'form' , $atts ) && 
-			in_array( $atts['form'] , $this->whichs ) ) ? $atts['form'] : $this->whichs[3] ; 
+			in_array( $atts['form'] , $this->whichs ) ) ? $atts['form'] : $this->whichs[4] ; 
 		$display = ( !empty( $atts) && array_key_exists( 'display' , $atts ) && 
 			in_array( $atts['display'] , $this->displays ) ) ? $atts['display'] : $this->displays[0] ; 
 		
@@ -193,7 +193,8 @@ final class SQLSearchWP {
 			'test' , 
 			'freeform' , 
 			'searchform',
-			'dr14'
+			'dr14',
+			'dr14Secondary'
 		);
 		$this->displays=array( 
 			'div' , 
