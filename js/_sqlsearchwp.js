@@ -47,7 +47,7 @@
 		    type: "POST",
 		    data:{"Query":"","Accept":"application/xml"},
 		    success: function (data) {
-			sqlsearchwp.showResults( data , false , true, true );
+			sqlsearchwp.showResults( data , false , true, true, false );
 		    }
 		},
 		dr14Secondary:{
@@ -55,11 +55,12 @@
 		    ContentType:"application/json",
 		    type: "POST",
 		    data:{"Query":"","Accept":"application/xml"},
-		    success: function (data) {
-			sqlsearchwp.showResults( data , false , true, true );
+		    success: function (data, newWin) {
+			sqlsearchwp.showResults( data , false , true, true, sqlsearchwp.newWin );
 		    }
 		}
 		},
+		newWin:false,
 		/*query: { 
 			test: 
 				'SELECT TOP 10 '+
@@ -90,7 +91,7 @@
 			//this.showMessage( 'Welcome' , 'Please enjoy this form.' , 'info' , false );
 			this.showInstructions( webroot+"includes/" );
 			this.showForm( sqlsearchwp.context , false , true );
-			this.showResults( '' , false , false );
+			this.showResults( '<pre>Results Empty!\n\n<strong>Check Syntax</strong> or <strong>Submit</strong> to get results</pre>' , false , false, false, false);
 			
 			// Prevent form submitting/reloading page
 			$( sqlsearchwp.context ).on( "submit" , "form#sqls-form" , function( e ){ e.preventDefault(); });
@@ -100,6 +101,8 @@
 			//$( sqlsearchwp.context ).on( "click" , "#sqls-submit" , sqlsearchwp.doSubmit );
 			$("#sqls-edit").on('click', sqlsearchwp.enableQuery);
 			$("#sqls-query").on('input', sqlsearchwp.doQueryUpdate);
+			$("#sqls-download").on('click', sqlsearchwp.download);
+			$("#sqls-newWindow").on('click', sqlsearchwp.updateCheckbox);
 			$( sqlsearchwp.context ).on( "click" , "#sqls-submit" , { target:target , which:which } , sqlsearchwp.doSubmit );
 			$( sqlsearchwp.context ).on( "click" , "#sqls-syntax" , sqlsearchwp.doSyntax );
 			$( sqlsearchwp.context ).on( "click" , "#sqls-reset" , sqlsearchwp.doReset );
@@ -120,6 +123,60 @@
 				$( 'form#sqls-searchform' ).on( "change" , "input" , sqlsearchwp.doUpdate );
 				}*/
 			
+		},
+		
+		updateCheckbox: function(e) {
+			var setting = e.currentTarget.dataset.value;
+			if (setting === "no") {
+				setting = "yes";
+				sqlsearchwp.newWin = true;
+				e.currentTarget.dataset.value = setting;
+			} else {
+				setting = "no";
+				sqlsearchwp.newWin = false;
+				e.currentTarget.dataset.value = setting;
+			}
+		},
+		
+		openWindow: function(content) {
+			var type = 'text/html';
+			var a = document.createElement("a");
+			var file = new Blob([content], {type: type});
+			//window.open(URL.createObjectURL(file));
+			a.href = URL.createObjectURL(file);
+			a.target = "_blank";
+			a.click();
+		},
+		
+		download: function(e) {
+			//console.log('hi');
+			var docText = sessionStorage.getItem('queryResults');
+			var lines = docText.split('\n');
+			docText = '';
+			for (var i = 0; i < lines.length; i++) {
+				var values = lines[i].split(',');
+				for (var x = 0; x < values.length; x++) {
+					values[x] = '\"'.concat(values[x]);
+					values[x] += '\"';
+					docText += values[x];
+					if (x !== values.length - 1) {
+						docText += ',';
+					}
+				}
+				if (i !== lines.length - 1) {
+					docText += '\n';
+				}
+			}
+			//console.log(docText);
+			var name = 'results.csv';
+			var type = 'text/csv';
+            var a = document.createElement("a");
+			var file = new Blob([docText], {type: type});
+			//window.open(URL.createObjectURL(file));
+			a.href = URL.createObjectURL(file);
+			a.download = name;
+			a.click();
+			//window.open('data:text/csv;charset=utf-8,' + escape(docText), 'results.csv');
 		},
 		
 		doResize: function() {
@@ -157,6 +214,7 @@
                    var textValue = e.target.value;
 		   document.getElementById("sqls-query").innerHTML = textValue;
 		   sqlsearchwp.targets.dr14.data.Query = textValue;
+		   sqlsearchwp.targets.dr14Secondary.data.Query = textValue;
 
 	        },
 		
@@ -252,7 +310,7 @@
 			var target = e.data.target;
 			var which = e.data.which;
 
-			if ( which === 'dr14' ) {
+			if ( which === 'dr14' || which === 'dr14Secondary') {
 			    target.data = {"Query":query};
 			    $.ajax( target );
 			    
@@ -500,7 +558,7 @@
 		**/
 		doReset: function( e ) {
 			// Reset query - don't do this while testing...
-			sqlsearchwp.showResults( '' , false , false );
+			sqlsearchwp.showResults( '<pre>Results Empty!\n\n<strong>Check Syntax</strong> or <strong>Submit</strong> to get results</pre>' , false , false, false, false );
 			sqlsearchwp.showForm( sqlsearchwp.context , false , true );
 		},
 		
@@ -588,16 +646,19 @@
 		 * @param String $results Results to display
 		 * @param Boolean $append Append or replace current message(s)
 		**/
-		showResults: function( results , append , show, format ) {
+		showResults: function( results , append , show, format, newWin ) {
+			sessionStorage.setItem('queryResults', results);
 			var container = $( '#sqls-results' );
 
 			var contents = ( append !== undefined && append ) ? $(container).html() : '' ;
 			
 			contents += ( results !== undefined ) ? results : '' ;
 			if (format) {
-			    $(container).html( sqlsearchwp.formatResults(contents) );
-			} else {
-			    $(container).html(contents);
+			    contents = sqlsearchwp.formatResults(contents);
+			} 
+			$(container).html(contents);
+			if (newWin) {
+				sqlsearchwp.openWindow(contents);
 			}
 			sqlsearchwp.doCollapse( '#sqls-results-wrap>h2>a[data-toggle]', container, show );
 		},
