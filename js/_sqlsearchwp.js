@@ -153,7 +153,7 @@
 			var docText = sessionStorage.getItem('queryResults');
 			var lines = docText.split('\n');
 			docText = '';
-			for (var i = 0; i < lines.length; i++) {
+			for (var i = 0; i < lines.length-1; i++) {
 				var values = lines[i].split(',');
 				for (var x = 0; x < values.length; x++) {
 					values[x] = '\"'.concat(values[x]);
@@ -197,10 +197,12 @@
 		if(e.currentTarget.dataset.unlock === "yes") {
 		    $("#sqls-query").prop("disabled", false);
 		    e.currentTarget.dataset.unlock = "no";
+			e.currentTarget.innerHTML = 'Lock';
 		}
 		else {
 		    $("#sqls-query").prop("disabled", true);
 		    e.currentTarget.dataset.unlock = "yes";
+			e.currentTarget.innerHTML='Unlock';
 		}
 	        },
 
@@ -647,7 +649,12 @@
 		 * @param Boolean $append Append or replace current message(s)
 		**/
 		showResults: function( results , append , show, format, newWin ) {
-			sessionStorage.setItem('queryResults', results);
+			if(format) {
+				sessionStorage.setItem('queryResults', results);
+				document.getElementById('sqls-download').style = '';
+			} else {
+				document.getElementById('sqls-download').style = 'display:none;';
+			}
 			var container = $( '#sqls-results' );
 
 			var contents = ( append !== undefined && append ) ? $(container).html() : '' ;
@@ -660,7 +667,7 @@
 			if (newWin) {
 				sqlsearchwp.openWindow(contents);
 			}
-			sqlsearchwp.doCollapse( '#sqls-results-wrap>h2>a[data-toggle]', container, show );
+			sqlsearchwp.doCollapse( '#sqls-results-wrap>h2>a[data-toggle]', $('#sqls-results-outer'), show );
 		},
 
 		formatResults: function(data) {
@@ -683,6 +690,7 @@
 			    output += '</tr>';
 			}
 			output += '</table></pre>';
+			//output += '<div class="clearfix"></div><div class="row"><div class="col-xs-12 col-sm-12 col-md-12 text-center"><button id="sqls-download" name="sqls-download" class ="sqls-download btn btn-primary btn-dr14">Download</button></div></div>';
 			return output;
 			
 	        }
