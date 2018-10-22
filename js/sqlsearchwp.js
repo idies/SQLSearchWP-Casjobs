@@ -1,4 +1,4 @@
-/*! sqlsearchwp - v1.0.0 - by:1.0.0 - license: - 2018-10-18 */+function ($) {
+/*! sqlsearchwp - v1.0.0 - by:1.0.0 - license: - 2018-10-22 */+function ($) {
   'use strict';
 
   // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
