@@ -37,8 +37,30 @@ $result .= <<<EOT
 <div class="col-xs-12 col-sm-12 col-md-6 text-center">
 <button id="sqls-submit" name="sqls-submit" class="sqls-submit btn btn-success btn-dr14">Submit</button>
 <div class="checkbox">
-  <label><input id="sqls-newWindow" type="checkbox" data-value="no">Open Results in New Tab</label>
+  <label><input type="checkbox" id="sqls-newWindow" data-value="no">Open in New Tab</label>
+  <a href="#" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-info-sign"></span></a>
 </div>
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-sm sqls-modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Important</h4>
+        </div>
+        <div class="modal-body">
+          Be sure to enable pop-ups on this site to allow results to open in a new tab.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-primary btn-dr14" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+  
 </div>
 </div>
 </div>

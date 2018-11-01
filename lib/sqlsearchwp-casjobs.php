@@ -5,7 +5,7 @@ Plugin URI: http://www.voyages.sdss.org
 Description: Query Casjobs
 Version: 1.0.0
 Author: Bonnie Souter, William Harrington
-Author URI: https://github.com/bonbons0220
+Author URI: https://github.com/idies/SQLSearchWP-Casjobs
 License: MIT
 */
 

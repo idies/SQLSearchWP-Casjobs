@@ -1,13 +1,13 @@
 {
-  "name": "sqlsearchwp",
+  "name": "SQLSearchWP-Casjobs",
   "version": "1.0.0",
-  "author": "Bonnie Souter <bsouter@jhu.edu>",
+  "author": "Bonnie Souter <bsouter@jhu.edu>, William Harrington <wharrin3@jhu.edu>",
   "description": "SDSS SQLSearch Plugin for WordPress",
   "license": "MIT",
   "homepage": "http://voyages.sdss.org",
   "repository": {
     "type": "git",
-    "url": "git://github.com/sciserver/sqlsearchwp.git"
+    "url": "https://github.com/idies/SQLSearchWP-Casjobs.git"
   },
   "licenses": [
     {

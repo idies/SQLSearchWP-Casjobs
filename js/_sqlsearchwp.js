@@ -102,7 +102,7 @@
 			$("#sqls-edit").on('click', sqlsearchwp.enableQuery);
 			$("#sqls-query").on('input', sqlsearchwp.doQueryUpdate);
 			$("#sqls-download").on('click', sqlsearchwp.download);
-			$("#sqls-newWindow").on('click', sqlsearchwp.updateCheckbox);
+			$("#sqls-newWindow").on('change', sqlsearchwp.updateCheckbox);
 			$( sqlsearchwp.context ).on( "click" , "#sqls-submit" , { target:target , which:which } , sqlsearchwp.doSubmit );
 			$( sqlsearchwp.context ).on( "click" , "#sqls-syntax" , sqlsearchwp.doSyntax );
 			$( sqlsearchwp.context ).on( "click" , "#sqls-reset" , sqlsearchwp.doReset );
@@ -126,6 +126,7 @@
 		},
 		
 		updateCheckbox: function(e) {
+			console.log("new tab");
 			var setting = e.currentTarget.dataset.value;
 			if (setting === "no") {
 				setting = "yes";
@@ -673,7 +674,7 @@
 		formatResults: function(data) {
 		        var output = '<pre><table class="table-bordered table-responsive">';
 		        var lines = data.split('\n');
-			for(var i = 0; i < lines.length; i++) {
+			for(var i = 0; i < lines.length - 1; i++) {
 			    output += '<tr>';
 			    var items = lines[i].split(',');
 			    var symbolBegin = '<td>';
