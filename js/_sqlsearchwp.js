@@ -86,7 +86,7 @@
 			var target = sqlsearchwp.targets[which];
 			
 			//initialize query to be default text
-			target.data.Query = "SELECT TOP 10 p.objid,p.ra,p.dec,p.u,p.g,p.r,p.i,p.z,p.run, p.rerun, p.camcol, p.field, s.specobjid, s.class, s.z as redshift,s.plate, s.mjd, s.fiberid FROM PhotoObj AS p JOIN SpecObj AS s ON s.bestobjid = p.objid WHERE p.u BETWEEN 0 AND 19.6 AND g BETWEEN 0 AND 20";
+			target.data.Query = "select top 10 p.objid, p.ra, p.dec, p.g, p.r, s.z from photoObj p join specObj s on s.bestobjid = p.objid where p.ra between -0.1 and 0.1 and p.dec between -0.1 and 0.1";
 			// Show the Search Page
 			//this.showMessage( 'Welcome' , 'Please enjoy this form.' , 'info' , false );
 			this.showInstructions( webroot+"includes/" );
@@ -199,11 +199,13 @@
 		    $("#sqls-query").prop("disabled", false);
 		    e.currentTarget.dataset.unlock = "no";
 			e.currentTarget.innerHTML = 'Lock';
+			document.getElementById("sqls-lock").style = "display: none;";
 		}
 		else {
 		    $("#sqls-query").prop("disabled", true);
 		    e.currentTarget.dataset.unlock = "yes";
 			e.currentTarget.innerHTML='Unlock';
+			document.getElementById("sqls-lock").style = "";
 		}
 	        },
 
@@ -308,6 +310,7 @@
 			//var display = $( sqlsearchwp.context ).data('sqls-display');
 			//var _query = e.currentTarget.dataset.sqlsSubmitto +
 			//encodeURI( $( '#sqls-query' ).val() );
+			document.getElementById("sqls-hour").style = "";
 
 			var query = e.data.target.data.Query;
 			var target = e.data.target;
@@ -522,7 +525,7 @@
 		**/
 		doSyntax: function( e ) {
 			//if (SQLSDEBUG) { console.log('doSyntax'); }
-	
+			document.getElementById("sqls-hour").style = "";
 			// Get target db from form data
 			var display = $( sqlsearchwp.context ).data('sqls-display');
 			var _query = e.currentTarget.dataset.sqlsSubmitto +
@@ -664,6 +667,7 @@
 			if (format) {
 			    contents = sqlsearchwp.formatResults(contents);
 			} 
+			document.getElementById("sqls-hour").style = "display: none;";
 			$(container).html(contents);
 			if (newWin) {
 				sqlsearchwp.openWindow(contents);
