@@ -113,6 +113,9 @@ final class SQLSearchWP {
 			in_array( $atts['form'] , $this->whichs ) ) ? $atts['form'] : $this->whichs[4] ; 
 		$display = ( !empty( $atts) && array_key_exists( 'display' , $atts ) && 
 			in_array( $atts['display'] , $this->displays ) ) ? $atts['display'] : $this->displays[0] ; 
+			
+		$num = $atts['num']; 
+		$color = $atts['color'];
 		
 		//Shortcode loads scripts and styles
 		wp_enqueue_script( 'sqlsearchwp-script' );
@@ -123,16 +126,25 @@ final class SQLSearchWP {
 		else
 			wp_enqueue_script( 'bootstrap-min' );
 				
-		return $this->getForm( $which , $display , $webroot );
+		//$context_name = array('context' => 'sqls-container-' . $num, 'color' => $color);
+		//wp_localize_script( 'sqlsearchwp-script', 'php_vars', $context_name );
+		return $this->getForm( $which , $display , $webroot, $num , $color);
+	}
+	
+	public function getContextName() {
+		return $this->context_name;
 	}
 
 	/**
 	 * Generate HTML for this form
 	 */
-	public function getForm( $which , $display , $webroot ) {
+	public function getForm( $which , $display , $webroot, $num, $color ) {
 		//Content 
-		$result = '<div id="sqls-container" class="sqls-wrap" data-sqls-webroot="' . $webroot . '" data-sqls-which="' . $which . '" data-sqls-display="' . $display . '" >';
-		
+		$result = '<div id="sqls-container-'. $num . '" class="sqls-wrap" data-sqls-webroot="' . $webroot . '" data-sqls-which="' . $which . '" data-sqls-display="' . $display . '" >';
+		#$container_name = 'sqls-container' . $num;
+		#echo '<script>';
+		#echo 'sqlsearchwp.context = ' . json_encode($container_name) . ';';
+		#echo '</script>';
 		require($this->includes_dir . 'form-'. $which . '.php'); 
 		
 		$result .= '</div>';
