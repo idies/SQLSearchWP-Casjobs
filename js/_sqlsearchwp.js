@@ -18,9 +18,9 @@
 
 	var sqlsearchwp = {
 
-		context: '#sqls-container',
+		context: "body",
 		
-		identity: '',
+		//identity: '',
 		
 		levels: [
 			'info',
@@ -49,7 +49,7 @@
 		    type: "POST",
 		    data:{"Query":"","Accept":"application/xml"},
 		    success: function (data) {
-			sqlsearchwp.showResults( data , false , true, true, false );
+			sqlsearchwp.showResults( data , false , true, true);
 		    }
 		},
 		dr14Secondary:{
@@ -57,12 +57,13 @@
 		    ContentType:"application/json",
 		    type: "POST",
 		    data:{"Query":"","Accept":"application/xml"},
-		    success: function (data, newWin) {
-			sqlsearchwp.showResults( data , false , true, true, sqlsearchwp.newWin );
+		    success: function (data) {
+			sqlsearchwp.showResults( data , false , true, true );
 		    }
 		}
 		},
-		newWin:false,
+		newWin: [],
+		currentID: '0',
 		/*query: { 
 			test: 
 				'SELECT TOP 10 '+
@@ -78,18 +79,23 @@
 			prod: ''
 			},*/
 			
-		init: function(context){
+		init: function(count){
 			//console.log(php_vars.context);
 			//sqlsearchwp.context = '#' + php_vars.context;
-			sqlsearchwp.context = $(context);
-			sqlsearchwp.identity = context.substring(context.length - 1, context.length);
+			//sqlsearchwp.context = $(context);
+			//sqlsearchwp.identity = context.substring(context.length - 1, context.length);
 			//console.log(sqlsearchwp.context);
 						
-			var s=sqlsearchwp;
+			//var s=sqlsearchwp;
 			
 			// get base url of files, test or prod query, target query location, and how to show results.
-			var webroot = $( sqlsearchwp.context ).data('sqls-webroot');
-			var which = $( sqlsearchwp.context ).data('sqls-which');
+			for(var i = 0; i < count; i++) {
+				sqlsearchwp.newWin.push(false);
+			}
+			var webroot = $( "#sqls-container-0" ).data('sqls-webroot');
+			console.log(webroot);
+			var which = $( "#sqls-container-0" ).data('sqls-which');
+			console.log(which);
 			var target = sqlsearchwp.targets[which];
 			console.log(which);
 			console.log(sqlsearchwp.context);
@@ -104,7 +110,7 @@
 			//sqlsearchwp.showMessage( 'Welcome' , 'Please enjoy this form.' , 'info' , false );
 			this.showInstructions( webroot+"includes/" );
 			this.showForm( sqlsearchwp.context , false , true );
-			this.showResults( '<pre>Results Empty!\n\n<strong>Check Syntax</strong> or <strong>Submit</strong> to get results</pre>' , false , false, false, false);
+			this.showInitialResults( '<pre>Results Empty!\n\n<strong>Check Syntax</strong> or <strong>Submit</strong> to get results</pre>' , count);
 			
 			// Prevent form submitting/reloading page
 			$(".sqls-form", sqlsearchwp.context).on( "submit" , function( e ){ e.preventDefault(); });
@@ -139,6 +145,13 @@
 			
 		},
 		
+		showInitialResults: function(results, count) {
+			for(var i = 0; i < count; i++) {
+			var container = $("#sqls-results-" + i.toString());
+			$(container).html(results);
+			}
+		},
+		
 		/*correctIDs: function() {
 			document.getElementById('sqls-instructions').id = 'sqls-instructions-' + sqlsearchwp.identity;
 			document.getElementById('sqls-form').id = 'sqls-form-' + sqlsearchwp.identity;
@@ -169,14 +182,16 @@
 		
 		updateCheckbox: function(e) {
 			console.log("new tab");
+			var id = e.currentTarget.id;
+			var index = Number(id.slice(-1));
 			var setting = e.currentTarget.dataset.value;
 			if (setting === "no") {
 				setting = "yes";
-				sqlsearchwp.newWin = true;
+				sqlsearchwp.newWin[index] = true;
 				e.currentTarget.dataset.value = setting;
 			} else {
 				setting = "no";
-				sqlsearchwp.newWin = false;
+				sqlsearchwp.newWin[index] = false;
 				e.currentTarget.dataset.value = setting;
 			}
 		},
@@ -192,8 +207,9 @@
 		},
 		
 		download: function(e) {
+			var id = e.currentTarget.id;
 			//console.log('hi');
-			var docText = sessionStorage.getItem('queryResults' + sqlsearchwp.identity);
+			var docText = sessionStorage.getItem('queryResults' + id.slice(-1));
 			var lines = docText.split('\n');
 			docText = '';
 			for (var i = 0; i < lines.length-1; i++) {
@@ -223,17 +239,18 @@
 		},
 
 		enableQuery: function(e) {
+			var id = e.currentTarget.id;
 		if(e.currentTarget.dataset.unlock === "yes") {
-		    $(".sqls-query", sqlsearchwp.context).prop("disabled", false);
+		    $("#sqls-query-" + id.slice(-1)).prop("disabled", false);
 		    e.currentTarget.dataset.unlock = "no";
 			e.currentTarget.innerHTML = 'Lock';
-			$(".sqls-lock", sqlsearchwp.context).prop("style", "display: none;");
+			$("#sqls-lock-" + id.slice(-1)).prop("style", "display: none;");
 		}
 		else {
-		    $(".sqls-query", sqlsearchwp.context).prop("disabled", true);
+		    $("#sqls-query-" + id.slice(-1)).prop("disabled", true);
 		    e.currentTarget.dataset.unlock = "yes";
 			e.currentTarget.innerHTML='Unlock';
-			$(".sqls-lock", sqlsearchwp.context).prop("style", "");
+			$("#sqls-lock-" + id.slice(-1)).prop("style", "");
 		}
 	        },
 
@@ -243,11 +260,12 @@
 		 *@param Object e Event Object
 		 **/
 		doQueryUpdate: function(e) {
+			var id = e.currentTarget.id;
 		
                    var textValue = e.target.value;
-		   $(".sqls-query", sqlsearchwp.context).innerHTML = textValue;
-		   sqlsearchwp.targets.dr14.data.Query = textValue;
-		   sqlsearchwp.targets.dr14Secondary.data.Query = textValue;
+		   $("#sqls-query-" + id.slice(-1)).innerHTML = textValue;
+		   //sqlsearchwp.targets.dr14.data.Query = textValue;
+		   //sqlsearchwp.targets.dr14Secondary.data.Query = textValue;
 
 	        },
 		
@@ -257,15 +275,17 @@
 		 * @param Object e Event Object
 		**/
 		doSubmit: function( e ) {
-			console.log(sqlsearchwp.context);
+			var id = e.currentTarget.id;
+			sqlsearchwp.currentID = id.slice(-1);
+			//console.log(sqlsearchwp.context);
 			
 			// Get target db from form data
 		
 			//var display = $( sqlsearchwp.context ).data('sqls-display');
 			//var _query = e.currentTarget.dataset.sqlsSubmitto +
 			//encodeURI( $( '#sqls-query' ).val() );
-			$(".sqls-hour", sqlsearchwp.context).prop("style", "");
-			var query = e.data.target.data.Query;
+			$("#sqls-hour-" + id.slice(-1)).prop("style", "");
+			var query = $("#sqls-query-" + id.slice(-1)).innerHTML;
 			var target = e.data.target;
 			var which = e.data.which;
 
@@ -325,11 +345,13 @@
 		**/
 		doSyntax: function( e ) {
 			//if (SQLSDEBUG) { console.log('doSyntax'); }
-			$(".sqls-hour", sqlsearchwp.context).prop("style", "");
+			var id = e.currentTarget.id;
+			sqlsearchwp.currentID = id.slice(-1);
+			$("#sqls-hour-" + id.slice(-1)).prop("style", "");
 			// Get target db from form data
-			var display = $( sqlsearchwp.context ).data('sqls-display');
+			var display = $( "#sqls-container-0" ).data('sqls-display');
 			var _query = e.currentTarget.dataset.sqlsSubmitto +
-				encodeURI( $(".sqls-query", sqlsearchwp.context).val() );
+				encodeURI( $("#sqls-query-" + id.slice(-1)).val() );
 
 			if ( display === 'div' ) {				
 				//send query from form to skyserverws and listen for return
@@ -380,7 +402,7 @@
 		showInstructions: function( instructions ) {
 			var instContainer = $(".sqls-instructions", sqlsearchwp.context);
 			var instWrapper = $(".sqls-instructions-wrap", sqlsearchwp.context);
-			var which = $( sqlsearchwp.context ).data('sqls-which');
+			var which = $( "#sqls-container-0" ).data('sqls-which');
 
 			var xhttp;
 			xhttp = new XMLHttpRequest();
@@ -414,14 +436,15 @@
 		 * @param String $results Results to display
 		 * @param Boolean $append Append or replace current message(s)
 		**/
-		showResults: function( results , append , show, format, newWin ) {
+		showResults: function( results , append , show, format) {
+			var index = Number(sqlsearchwp.currentID);
 			if(format) {
-				sessionStorage.setItem('queryResults' + sqlsearchwp.identity, results);
-				$(".sqls-download", sqlsearchwp.context).prop("style", "");
+				sessionStorage.setItem('queryResults' + sqlsearchwp.currentID, results);
+				$("#sqls-download-" + sqlsearchwp.currentID).prop("style", "");
 			} else {
-				$(".sqls-download", sqlsearchwp.context).prop("style", "display:none;");
+				$("#sqls-download-" + sqlsearchwp.currentID).prop("style", "display:none;");
 			}
-			var container = $(".sqls-results", sqlsearchwp.context);
+			var container = $("#sqls-results-" + sqlsearchwp.currentID);
 
 			var contents = ( append !== undefined && append ) ? $(container).html() : '' ;
 			
@@ -429,9 +452,9 @@
 			if (format) {
 			    contents = sqlsearchwp.formatResults(contents);
 			} 
-			$(".sqls-hour", sqlsearchwp.context).prop("style", "display: none;");
+			$("#sqls-hour-" + sqlsearchwp.currentID).prop("style", "display: none;");
 			$(container).html(contents);
-			if (newWin) {
+			if (sqlsearchwp.newWin[index]) {
 				sqlsearchwp.openWindow(contents);
 			}
 			sqlsearchwp.doCollapse(sqlsearchwp.context + ' .sqls-results-wrap>h2>a[data-toggle]', $(".sqls-results-outer", sqlsearchwp.context), show );
@@ -465,18 +488,19 @@
 
 	$(document).ready( function(  ) {
 		var divs = document.getElementsByClassName("sqls-wrap");
-		for(var i = 0; i < divs.length; i++) {
+		sqlsearchwp.init(divs.length);
+		//for(var i = 0; i < divs.length; i++) {
 			//console.log(divs[i].id);
 			//if($(divs[i].id).length === 1) {
-				var id = '#' + divs[i].id;
-				sqlsearchwp.init(id);
+				//var id = '#' + divs[i].id;
+				//sqlsearchwp.init(id);
 				//sqlsearchwp.init(id);
 				//console.log(id);
 			//}
 			/*else {
 				if (SQLSDEBUG) { console.log('Error running sqlsearchwp.js. One and only one "#' + divs[i].id + '" expected.');}
 			}*/
-		}
+		//}
 		//if ( $( '#' + php_vars.context ).length === 1 ) {
 			//sqlsearchwp.init(  );
 		//} else {
