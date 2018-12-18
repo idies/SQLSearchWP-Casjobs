@@ -43,7 +43,7 @@ and p.dec between -0.1 and 0.1</textarea>
 							<div class="col-xs-12 col-sm-12 col-md-6 text-center">
 								<button id="sqls-submit-'.$num.'" name="sqls-submit" class="sqls-submit btn btn-success btn-dr14">Submit</button>
 								<div class="checkbox">
-									<label><input type="checkbox" class="sqls-newWindow" data-value="no">Open in New Tab</label>
+									<label><input type="checkbox" id="sqls-newWindow-'.$num.'" class="sqls-newWindow" data-value="no">Open in New Tab</label>
 									<a name="mode" href="#" data-toggle="modal" data-target="#myModal-'.$num.'"><span class="glyphicon glyphicon-info-sign"></span></a>
 								</div>
 								<div class="modal fade" id="myModal-'.$num.'" role="dialog">
