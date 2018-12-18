@@ -116,6 +116,7 @@ final class SQLSearchWP {
 			
 		$num = $atts['num']; 
 		$color = $atts['color'];
+		$instructions = $atts['instructions'];
 		
 		//Shortcode loads scripts and styles
 		wp_enqueue_script( 'sqlsearchwp-script' );
@@ -128,7 +129,7 @@ final class SQLSearchWP {
 				
 		//$context_name = array('context' => 'sqls-container-' . $num, 'color' => $color);
 		//wp_localize_script( 'sqlsearchwp-script', 'php_vars', $context_name );
-		return $this->getForm( $which , $display , $webroot, $num , $color);
+		return $this->getForm( $which , $display , $webroot, $num , $color, $instructions);
 	}
 	
 	public function getContextName() {
@@ -138,7 +139,7 @@ final class SQLSearchWP {
 	/**
 	 * Generate HTML for this form
 	 */
-	public function getForm( $which , $display , $webroot, $num, $color ) {
+	public function getForm( $which , $display , $webroot, $num, $color, $instructions ) {
 		//Content 
 		$result = '<div id="sqls-container-'. $num . '" class="sqls-wrap" data-sqls-webroot="' . $webroot . '" data-sqls-which="' . $which . '" data-sqls-display="' . $display . '" >';
 		#$container_name = 'sqls-container' . $num;

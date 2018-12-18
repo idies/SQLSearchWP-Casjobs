@@ -1454,10 +1454,8 @@
 		},
 		
 		updateCheckbox: function(e) {
-			console.log("new tab");
 			var id = e.currentTarget.id;
 			var index = Number(id.slice(-1));
-			console.log(index);
 			var setting = e.currentTarget.dataset.value;
 			if (setting === "no") {
 				setting = "yes";

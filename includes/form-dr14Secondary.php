@@ -6,13 +6,16 @@ $result .= '<div class="row">
 			</div>
 		</div>
 	</div>
-	<div class="col-xs-12">
-		<div class="sqls-instructions-wrap well well-sm"> 
+	<div class="col-xs-12">';
+	if($instructions === 'show') {
+		$result.= 
+		'<div class="sqls-instructions-wrap well well-sm"> 
 			<h2><a name="instruct" role="button" data-toggle="collapse" href="#sqls-instructions-'.$num.'" aria-expanded="true" aria-controls="sqls-instructions">Instructions</a></h2>
 			<div id="sqls-instructions-'.$num.'" class="sqls-instructions collapse">
 			</div> 
-		</div>
-		<div class="sqls-form-wrap well well-sm">
+		</div>';
+	}
+		$result .= '<div class="sqls-form-wrap well well-sm">
 			<h2><a name="search" role="button" data-toggle="collapse" href="#sqls-form-'.$num.'" aria-expanded="true" aria-controls="sqls-form">SQL Search</a></h2>
 			<div class="form sqls-form">
 				<form id="sqls-form-'.$num.'" class="sqls-form collapse">
