@@ -111,9 +111,27 @@ final class SQLSearchWP {
 			in_array( $atts['display'] , $this->displays ) ) ? $atts['display'] : $this->displays[0] ; 
 			
 		$num = $atts['num']; 
-		$color = $atts['color'];
-		$instructions = $atts['instructions'];
-		$default = $atts['default'];
+		$color = "";
+		if(!empty( $atts) && array_key_exists( 'color' , $atts )) {
+			$color = $atts['color'];
+		}
+		else {
+			$color = "black";
+		}
+		$instructions = "";
+		if(!empty( $atts) && array_key_exists( 'instructions' , $atts )) {
+			$instructions = $atts['instructions'];
+		}
+		else {
+			$instructions = "show";
+		}
+		$default = "";
+		if (!empty( $atts) && array_key_exists( 'default' , $atts )) {
+			$default = $atts['default'];
+		}
+		else {
+			$default = "select top 10 p.objid, p.ra, p.dec, p.g, p.r, s.z from photoObj p join specObj s on s.bestobjid = p.objid where p.ra between -0.1 and 0.1 and p.dec between -0.1 and 0.1";
+		}
 		
 		//Shortcode loads scripts and styles
 		wp_enqueue_script( 'sqlsearchwp-script' );
