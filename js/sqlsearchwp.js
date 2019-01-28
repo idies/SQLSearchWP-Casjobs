@@ -1,4 +1,4 @@
-/*! SQLSearchWP-Casjobs - v1.0.0 - by:1.0.0 - license: - 2018-12-18 */+function ($) {
+/*! SQLSearchWP-Casjobs - v1.0.0 - by:1.0.0 - license: - 2019-01-28 */+function ($) {
   'use strict';
 
   // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
@@ -1376,30 +1376,9 @@
 
 		context: "body",
 		
-		levels: [
-			'info',
-			'warning',
-			'danger',
-		],
-		
-		buttons: [
-			'submit',
-			'images',
-			'syntax',
-			'clear'
-		],
-		
-		whichs: [
-			'test',
-			'freeform',
-			'searchform',
-			'dr14',
-			'dr14-secondary'
-		],
 		targets: {
-		dr14Secondary:{
-			//Removed protocol to bypass expired ssl certification. Change back to https:// once fixed
-		    url:"//skyserver.sdss.org/casjobs/RestAPI/contexts/dr14/query",
+		casjobs:{
+		    url:"https://skyserver.sdss.org/casjobs/RestAPI/contexts/dr14/query",
 		    ContentType:"application/json",
 		    type: "POST",
 		    data:{"Query":"","Accept":"application/xml"},
@@ -1408,7 +1387,9 @@
 		    }
 		}
 		},
+		
 		newWin: [],
+		
 		currentID: '0',
 			
 		init: function(count){
@@ -1417,19 +1398,12 @@
 				sqlsearchwp.newWin.push(false);
 			}
 			var webroot = $( "#sqls-container-0" ).data('sqls-webroot');
-			console.log(webroot);
 			var which = $( "#sqls-container-0" ).data('sqls-which');
-			console.log(which);
 			var target = sqlsearchwp.targets[which];
-			console.log(which);
-			console.log(sqlsearchwp.context);
-			
-			//initialize query to be default text
-			target.data.Query = "select top 10 p.objid, p.ra, p.dec, p.g, p.r, s.z from photoObj p join specObj s on s.bestobjid = p.objid where p.ra between -0.1 and 0.1 and p.dec between -0.1 and 0.1";
 			// Show the Search Page
 			this.showInstructions( webroot+"includes/" );
 			this.showForm( sqlsearchwp.context , false , true );
-			this.showInitialResults( '<pre>Results Empty!\n\n<strong>Check Syntax</strong> or <strong>Submit</strong> to get results</pre>' , count);
+			this.showInitialResults( '<br>Results Empty!<br><br><strong>Check Syntax</strong> or <strong>Submit</strong> to get results' , count);
 			
 			// Prevent form submitting/reloading page
 			$(".sqls-form", sqlsearchwp.context).on( "submit" , function( e ){ e.preventDefault(); });
@@ -1448,8 +1422,9 @@
 		
 		showInitialResults: function(results, count) {
 			for(var i = 0; i < count; i++) {
-			var container = $("#sqls-results-" + i.toString());
-			$(container).html(results);
+				sqlsearchwp.currentID = i.toString();
+				sqlsearchwp.showResults( results , false , false, false, false );
+				sqlsearchwp.showForm( sqlsearchwp.context , false , true );
 			}
 		},
 		
@@ -1541,39 +1516,13 @@
 		**/
 		doSubmit: function( e ) {
 			var id = e.currentTarget.id;
-			sqlsearchwp.currentID = id.slice(-1);
-			
-			// Get target db from form data
-		
+			sqlsearchwp.currentID = id.slice(-1);	
 			$("#sqls-hour-" + sqlsearchwp.currentID).prop("style", "");
 			var query = $("#sqls-query-" + sqlsearchwp.currentID).val();
 			var target = e.data.target;
 			var which = e.data.which;
-
-			if ( which === 'dr14' || which === 'dr14Secondary') {
-			    target.data = {"Query":query};
-			    $.ajax( target );
-			    
-			}
-			else {
-			    
-			    //send query from form to skyserverws and listen for return
-			    var xhttp;
-			    xhttp = new XMLHttpRequest();
-			    xhttp.onreadystatechange = function() {
-				if (this.readyState === 4 && this.status === 200) {
-				    var response = this.responseText;
-				    response = response.replace(/.*<body.*?>/i , "");
-				    response = response.replace(/<\/body.*/i , "");
-
-				    sqlsearchwp.showResults( response , false , true, true );
-					sqlsearchwp.showForm( '' , true , false );
-				}
-			    };
-			    xhttp.open("GET", query , true);
-			    xhttp.send();
-			}
-			
+			target.data = {"Query":query};
+			$.ajax( target );
 		},
 		
 		/**
@@ -1626,7 +1575,7 @@
 			// Reset query - don't do this while testing...
 			var id = e.currentTarget.id;
 			sqlsearchwp.currentID = id.slice(-1);
-			sqlsearchwp.showResults( '<pre>Results Empty!\n\n<strong>Check Syntax</strong> or <strong>Submit</strong> to get results</pre>' , false , false, false, false );
+			sqlsearchwp.showResults( '<br>Results Empty!<br><br><strong>Check Syntax</strong> or <strong>Submit</strong> to get results' , false , false, false, false );
 			sqlsearchwp.showForm( sqlsearchwp.context , false , true );
 		},
 		

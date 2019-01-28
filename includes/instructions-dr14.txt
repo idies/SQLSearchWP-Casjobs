@@ -1,1 +1,0 @@
-These are the instructions for dr14. This should show up as the text under the "Instructions" block.

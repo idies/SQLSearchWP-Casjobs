@@ -17,9 +17,7 @@ final class SQLSearchWP {
 
 	public $dir_path = '';
 	public $dir_uri = '';
-	//public $admin_dir = '';
 	public $lib_dir = '';
-	//public $templates_dir = '';
 	public $includes_dir = '';
 	public $css_uri = '';
 	public $js_uri = '';
@@ -92,8 +90,6 @@ final class SQLSearchWP {
 	  if(defined('WP_ENV')) {
 	    if(WP_ENV == 'development') {
 		wp_register_script( 'sqlsearchwp-script', $this->js_uri . "sqlsearchwp.js" , array() , '1.0.0', true );
-		//wp_register_script( 'bootstrap-min', $this->bootstrap_uri . "bootstrap.min.js" , array( 'jquery' ), false , true );
-		//wp_register_script( 'bootstrap', $this->bootstrap_uri . "bootstrap.js" , array( 'jquery' ), false , true );
 		
 		//Styles to be Registered, but not enqueued
 		wp_register_style( 'sqlsearchwp-style', $this->css_uri . "sqlsearchwp.css" );
@@ -110,13 +106,14 @@ final class SQLSearchWP {
 		$webroot = $this->dir_uri;
 		
 		$which = ( !empty( $atts) && array_key_exists( 'form' , $atts ) && 
-			in_array( $atts['form'] , $this->whichs ) ) ? $atts['form'] : $this->whichs[4] ; 
+			in_array( $atts['form'] , $this->whichs ) ) ? $atts['form'] : $this->whichs[0] ; 
 		$display = ( !empty( $atts) && array_key_exists( 'display' , $atts ) && 
 			in_array( $atts['display'] , $this->displays ) ) ? $atts['display'] : $this->displays[0] ; 
 			
 		$num = $atts['num']; 
 		$color = $atts['color'];
 		$instructions = $atts['instructions'];
+		$default = $atts['default'];
 		
 		//Shortcode loads scripts and styles
 		wp_enqueue_script( 'sqlsearchwp-script' );
@@ -126,10 +123,8 @@ final class SQLSearchWP {
 			wp_enqueue_script( 'bootstrap' );
 		else
 			wp_enqueue_script( 'bootstrap-min' );
-				
-		//$context_name = array('context' => 'sqls-container-' . $num, 'color' => $color);
-		//wp_localize_script( 'sqlsearchwp-script', 'php_vars', $context_name );
-		return $this->getForm( $which , $display , $webroot, $num , $color, $instructions);
+		
+		return $this->getForm( $which , $display , $webroot, $num , $color, $instructions, $default);
 	}
 	
 	public function getContextName() {
@@ -139,13 +134,9 @@ final class SQLSearchWP {
 	/**
 	 * Generate HTML for this form
 	 */
-	public function getForm( $which , $display , $webroot, $num, $color, $instructions ) {
+	public function getForm( $which , $display , $webroot, $num, $color, $instructions, $default ) {
 		//Content 
 		$result = '<div id="sqls-container-'. $num . '" class="sqls-wrap" data-sqls-webroot="' . $webroot . '" data-sqls-which="' . $which . '" data-sqls-display="' . $display . '" >';
-		#$container_name = 'sqls-container' . $num;
-		#echo '<script>';
-		#echo 'sqlsearchwp.context = ' . json_encode($container_name) . ';';
-		#echo '</script>';
 		require($this->includes_dir . 'form-'. $which . '.php'); 
 		
 		$result .= '</div>';
@@ -193,8 +184,6 @@ final class SQLSearchWP {
 
 		// Plugin directory paths.
 		$this->lib_dir       = trailingslashit( $this->dir_path . 'lib'       );
-		//$this->admin_dir     = trailingslashit( $this->dir_path . 'admin'     );
-		//$this->templates_dir = trailingslashit( $this->dir_path . 'templates' );
 		$this->includes_dir = trailingslashit( $this->dir_path . 'includes' );
 
 		// Plugin directory URIs.
@@ -203,11 +192,7 @@ final class SQLSearchWP {
 		$this->bootstrap_uri  = trailingslashit( $this->dir_uri . 'vendor/bootstrap/dist/js'  );
 		
 		$this->whichs=array( 
-			'test' , 
-			'freeform' , 
-			'searchform',
-			'dr14',
-			'dr14Secondary'
+			'casjobs'
 		);
 		$this->displays=array( 
 			'div' , 
@@ -223,23 +208,7 @@ final class SQLSearchWP {
 	/**
 	 * Loads files needed by the plugin.
 	 */
-	private function includes() {
-
-		// Load include files.
-		//require_once( $this->lib_dir . 'functions.php'                     );
-		//require_once( $this->lib_dir . 'functions-widgets.php'             );
-
-		// Load template files.
-		//require_once( $this->lib_dir . 'template.php' );
-
-		// Load admin/backend files.
-		if ( is_admin() ) {
-
-			// General admin functions.
-			//require_once( $this->admin_dir . 'functions-admin.php' );
-		
-		}
-	}
+	private function includes() {}
 
 	/**
 	 * Sets up main plugin actions and filters.
@@ -253,9 +222,7 @@ final class SQLSearchWP {
 	/**
 	 * Method that runs only when the plugin is activated.
 	 */
-	public function activation() {
-
-	}
+	public function activation() {}
 	
 }
 
