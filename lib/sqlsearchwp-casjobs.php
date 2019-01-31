@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: SQLSearchWP Casjobs
-Plugin URI: http://www.voyages.sdss.org
+Plugin Name: SQLSearchWP CasJobs
+Plugin URI: https://github.com/idies/SQLSearchWP-Casjobs/blob/master/README.md
 Description: Query Casjobs
 Version: 1.0.0
-Author: Bonnie Souter, William Harrington
-Author URI: https://github.com/idies/SQLSearchWP-Casjobs
+Author: William Harrington, Bonnie Souter
+Author URI: https://github.com/wharrington12
 License: MIT
 */
 
