@@ -1,4 +1,4 @@
-/*! SQLSearchWP-Casjobs - v1.0.0 - by:1.0.0 - license: - 2018-12-18 */+function ($) {
+/*! SQLSearchWP-Casjobs - v1.0.0 - by:1.0.0 - license: - 2019-01-04 */+function ($) {
   'use strict';
 
   // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
@@ -1373,86 +1373,65 @@
 	var SQLSDEBUG = true;
 
 	var sqlsearchwp = {
-
-		context: "body",
 		
-		levels: [
-			'info',
-			'warning',
-			'danger',
-		],
+		// default query to use if none specified
+		defaultquery : "select top 20 p.objid, p.ra, p.dec, p.g, p.r, s.z from photoObj p join specObj s on s.bestobjid = p.objid where p.ra between -0.1 and 0.1 and p.dec between -0.1 and 0.1",
 		
-		buttons: [
-			'submit',
-			'images',
-			'syntax',
-			'clear'
-		],
+		// default data release 		
+		defaultdr: "dr15",
 		
-		whichs: [
-			'test',
-			'freeform',
-			'searchform',
-			'dr14',
-			'dr14-secondary'
-		],
-		targets: {
-		dr14Secondary:{
-			//Removed protocol to bypass expired ssl certification. Change back to https:// once fixed
-		    url:"//skyserver.sdss.org/casjobs/RestAPI/contexts/dr14/query",
-		    ContentType:"application/json",
-		    type: "POST",
-		    data:{"Query":"","Accept":"application/xml"},
-		    success: function (data) {
-			sqlsearchwp.showResults( data , false , true, true );
-		    }
-		}
+		// base url for CasJobs REST API
+		restapi: "https//skyserver.sdss.org/casjobs/RestAPI/contexts/",
+		
+		target : {
+			ContentType : "application/json",	
+			type : "POST",
+			data : {
+				Query : "" ,
+				Accept : "application/xml"
+			},
+			success: function (data) {
+				sqlsearchwp.showResults( data , false , true, true );
+			},
 		},
-		newWin: [],
-		currentID: '0',
+		
+		// default results message
+		resultsmsg : "<strong>No results to display.</strong>",
+		
+		init: function( context ){
 			
-		init: function(count){
 			// get base url of files, test or prod query, target query location, and how to show results.
-			for(var i = 0; i < count; i++) {
-				sqlsearchwp.newWin.push(false);
-			}
-			var webroot = $( "#sqls-container-0" ).data('sqls-webroot');
-			console.log(webroot);
-			var which = $( "#sqls-container-0" ).data('sqls-which');
-			console.log(which);
-			var target = sqlsearchwp.targets[which];
-			console.log(which);
-			console.log(sqlsearchwp.context);
-			
-			//initialize query to be default text
-			target.data.Query = "select top 10 p.objid, p.ra, p.dec, p.g, p.r, s.z from photoObj p join specObj s on s.bestobjid = p.objid where p.ra between -0.1 and 0.1 and p.dec between -0.1 and 0.1";
-			// Show the Search Page
+			var webroot = $( context ).data('sqls-webroot');
 			this.showInstructions( webroot+"includes/" );
-			this.showForm( sqlsearchwp.context , false , true );
-			this.showInitialResults( '<pre>Results Empty!\n\n<strong>Check Syntax</strong> or <strong>Submit</strong> to get results</pre>' , count);
+			
+			// set up target rest api url
+			var dr = ( undefined === $( context ).data( 'sqls-dr' ) ) ? sqlsearchwp.dr : $( context ).data( 'sqls-dr' );
+			sqlsearchwp.target.url = sqlsearchwp.restapi + dr + '/query';
+			
+			// set up default query
+			var defaultquery = ( undefined === $( context ).data( 'defaultquery' ) ) ? sqlsearchwp.defaultquery : $( context ).data( 'defaultquery' ) ;
+			
+			// Show the Search Page
+			this.showForm( context , false , true );
+			this.showResults( sqlsearchwp.resultsmsg , false, true, false );
 			
 			// Prevent form submitting/reloading page
-			$(".sqls-form", sqlsearchwp.context).on( "submit" , function( e ){ e.preventDefault(); });
-			$(".sqls-searchform", sqlsearchwp.context).on( "submit" , function( e ){ e.preventDefault(); });
+			$( ".sqls-form" , context ).on( "submit" , function( e ){ e.preventDefault(); });
+			$( ".sqls-searchform" , context ).on( "submit" , function( e ){ e.preventDefault(); });
 			
 			// Add (delegated) click event handlers to buttons
-			$(".sqls-edit", sqlsearchwp.context).on('click', sqlsearchwp.enableQuery);
-			$(".sqls-query", sqlsearchwp.context).on('input', sqlsearchwp.doQueryUpdate);
-			$(".sqls-download", sqlsearchwp.context).on('click', sqlsearchwp.download);
-			$(".sqls-newWindow", sqlsearchwp.context).on('change', sqlsearchwp.updateCheckbox);
-			$(".sqls-submit", sqlsearchwp.context).on( "click" , { target:target , which:which } , sqlsearchwp.doSubmit );
-			$(".sqls-syntax", sqlsearchwp.context).on( "click" , sqlsearchwp.doSyntax );
-			$(".sqls-reset", sqlsearchwp.context).on( "click" , sqlsearchwp.doReset );
+			/*/
+			$(".sqls-edit", context).on('click', sqlsearchwp.enableQuery);
+			$(".sqls-query", context).on('input', sqlsearchwp.doQueryUpdate);
+			$(".sqls-download", context).on('click', sqlsearchwp.download);
+			$(".sqls-newWindow", context).on('change', sqlsearchwp.updateCheckbox);
+			$(".sqls-submit", context).on( "click" , { target:target  } , sqlsearchwp.doSubmit );
+			$(".sqls-syntax", context).on( "click" , sqlsearchwp.doSyntax );
+			$(".sqls-reset", context).on( "click" , sqlsearchwp.doReset );
+			/*/
 			
 		},
-		
-		showInitialResults: function(results, count) {
-			for(var i = 0; i < count; i++) {
-			var container = $("#sqls-results-" + i.toString());
-			$(container).html(results);
-			}
-		},
-		
+
 		updateCheckbox: function(e) {
 			var id = e.currentTarget.id;
 			var index = Number(id.slice(-1));
@@ -1540,40 +1519,13 @@
 		 * @param Object e Event Object
 		**/
 		doSubmit: function( e ) {
-			var id = e.currentTarget.id;
-			sqlsearchwp.currentID = id.slice(-1);
-			
-			// Get target db from form data
 		
-			$("#sqls-hour-" + sqlsearchwp.currentID).prop("style", "");
-			var query = $("#sqls-query-" + sqlsearchwp.currentID).val();
+			var query = $("#sqls-query" , context );
 			var target = e.data.target;
-			var which = e.data.which;
 
-			if ( which === 'dr14' || which === 'dr14Secondary') {
-			    target.data = {"Query":query};
-			    $.ajax( target );
+			target.data = {"Query":query};
+			$.ajax( target );
 			    
-			}
-			else {
-			    
-			    //send query from form to skyserverws and listen for return
-			    var xhttp;
-			    xhttp = new XMLHttpRequest();
-			    xhttp.onreadystatechange = function() {
-				if (this.readyState === 4 && this.status === 200) {
-				    var response = this.responseText;
-				    response = response.replace(/.*<body.*?>/i , "");
-				    response = response.replace(/<\/body.*/i , "");
-
-				    sqlsearchwp.showResults( response , false , true, true );
-					sqlsearchwp.showForm( '' , true , false );
-				}
-			    };
-			    xhttp.open("GET", query , true);
-			    xhttp.send();
-			}
-			
 		},
 		
 		/**
@@ -1657,13 +1609,14 @@
 		},
 		
 		showForm: function( context , append , show ) {
-			var toggle = $('.sqls-form-wrap>h2>a[data-toggle]', sqlsearchwp.context);
-			var container = $(".sqls-form-wrap", sqlsearchwp.context);
-			if (SQLSDEBUG) { console.log(  $( toggle ).attr('href') ); }
 			
-			var contents = ( append !== undefined && append ) ? $(container).html() : '' ;
+			var toggle = $( '.sqls-form-wrap>h2>a[data-toggle]' , context );
+			var container = $( ".sqls-form-wrap" , context );
+			if ( SQLSDEBUG ) { console.log(  $( toggle ).attr( 'href' ) ); }
 			
 			sqlsearchwp.doCollapse(sqlsearchwp.context + ' .sqls-form-wrap>h2>a[data-toggle]', container, show );
+			
+			//var contents = ( append !== undefined && append ) ? $(container).html() : '' ;
 			
 		},
 		
@@ -1723,8 +1676,13 @@
 	};
 
 	$(document).ready( function(  ) {
-		var divs = document.getElementsByClassName("sqls-wrap");
-		sqlsearchwp.init(divs.length);
+		var z=0;
+		
+		// give each a unique id and pass it in as the context to the init function.
+		$(".sqls-wrap").each( function() {
+			$( this ).prop( "id" , "sqls-wrap-" + z++ );
+			sqlsearchwp.init( "#" + $( this ).prop("id") );
+		} );
 	} );
 	
 })(jQuery);

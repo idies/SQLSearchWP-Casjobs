@@ -55,7 +55,8 @@ final class SQLSearchWP {
 		add_action( 'wp_enqueue_scripts', array( $this , 'register_sqlswp_script' ) );
 		
 		//Add Shortcodes
-		add_shortcode( 'sqlsearchwp-casjobs' , array( $this , 'sqlsearchwp_shortcode' ) );
+		add_shortcode( 'sqlsearchwp-bonnie' , array( $this , 'sqlsearchwp_shortcode' ) );
+		//add_shortcode( 'sqlsearchwp-casjobs' , array( $this , 'sqlsearchwp_shortcode' ) );
 		
 		//Add page(s) to the Admin Menu
 		add_action( 'admin_menu' , array( $this , 'sqls_menu' ) );

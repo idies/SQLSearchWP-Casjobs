@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: SQLSearchWP CasJobs
+Plugin Name: SQLSearchWP CasJobs Bonnie
 Plugin URI: http://www.voyages.sdss.org
 Description: Query Casjobs
 Version: 1.0.0

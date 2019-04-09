@@ -25,7 +25,7 @@ $result .= <<<EOT
 </div>
 <div class="row">
 <div class="col-xs-12 text-center">
-<textarea id="sqls-query" name="cmd" class="sqls-query" data-colnum=60 rows=10 cols=80 disabled>SELECT TOP 10 p.objid,p.ra,p.dec,p.u,p.g,p.r,p.i,p.z,p.run, p.rerun, p.camcol, p.field, s.specobjid, s.class, s.z as redshift,s.plate, s.mjd, s.fiberid FROM PhotoObj AS p JOIN SpecObj AS s ON s.bestobjid = p.objid WHERE p.u BETWEEN 0 AND 19.6 AND g BETWEEN 0 AND 20</textarea>
+<textarea id="sqls-query" name="cmd" class="sqls-query" data-colnum=60 rows=10 cols=80 disabled>SELECT TOP 1 p.objid,p.ra,p.dec,p.u,p.g,p.r,p.i,p.z,p.run, p.rerun, p.camcol, p.field, s.specobjid, s.class, s.z as redshift,s.plate, s.mjd, s.fiberid FROM PhotoObj AS p JOIN SpecObj AS s ON s.bestobjid = p.objid WHERE p.u BETWEEN 0 AND 19.6 AND g BETWEEN 0 AND 20</textarea>
 </div>
 </div>
 <div class="row">
