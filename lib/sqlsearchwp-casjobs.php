@@ -130,7 +130,7 @@ final class SQLSearchWP {
 			$default = $atts['default'];
 		}
 		else {
-			$default = "select top 10 p.objid, p.ra, p.dec, p.g, p.r, s.z from photoObj p join specObj s on s.bestobjid = p.objid where p.ra between -0.1 and 0.1 and p.dec between -0.1 and 0.1";
+			$default = 'select top 10 p.objid, p.ra, p.dec, p.g, p.r, s.z from photoObj p join specObj s on s.bestobjid = p.objid where p.ra between -0.1 and 0.1 and p.dec between -0.1 and 0.1';
 		}
 		
 		//Shortcode loads scripts and styles

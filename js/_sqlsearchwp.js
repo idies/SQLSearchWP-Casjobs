@@ -22,7 +22,8 @@
 		
 		targets: {
 		casjobs:{
-		    url:"https://skyserver.sdss.org/casjobs/RestAPI/contexts/dr14/query",
+			//put back in https:
+		    url:"//skyserver.sdss.org/casjobs/RestAPI/contexts/dr14/query",
 		    ContentType:"application/json",
 		    type: "POST",
 		    data:{"Query":"","Accept":"application/xml"},
