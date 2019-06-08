@@ -26,12 +26,12 @@ $result .= '<div class="row">
 								<button id="sqls-edit-'.$num.'" name="sqls-edit" class ="sqls-edit btn btn-primary btn-dr14" data-unlock="yes">Unlock</button>
 							</div>
 							<div class="col-xs-12 col-sm-12 col-md-6 text-center">
-								<button id="sqls-syntax-'.$num.'" name="sqls-syntax" data-sqls-submitto="http://skyserver.sdss.org/dr14/en/tools/search/x_results.aspx?searchtool=SQL&TaskName=Skyserver.Search.SQL&ReturnHtml=true&format=html&syntax=Syntax&cmd=" class="sqls-syntax btn btn-warning btn-dr14">Check Syntax</button>
+								<button id="sqls-syntax-'.$num.'" name="sqls-syntax" data-sqls-submitto="http://skyserver.sdss.org/dr15/en/tools/search/x_results.aspx?searchtool=SQL&TaskName=Skyserver.Search.SQL&ReturnHtml=true&format=html&syntax=Syntax&cmd=" class="sqls-syntax btn btn-warning btn-dr14">Check Syntax</button>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-xs-12 col-sm-12 col-md-12 text-center">
-								<p><strong>QUERY DR14</strong></p>
+								<p><strong>QUERY DR15</strong></p>
 								<div id="sqls-lock-'.$num.'" class="sqls-lock" style=""><span class="glyphicon glyphicon-lock"></span></div>
 								<textarea id="sqls-query-'.$num.'" name="cmd" class="sqls-query" style="color: '.$color.'" data-colnum=60 rows=10 cols=30 disabled>'.$default.'</textarea>
 							</div>
