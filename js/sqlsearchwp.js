@@ -1,4 +1,4 @@
-/*! SQLSearchWP-Casjobs - v1.0.0 - by:1.0.0 - license: - 2019-01-28 */+function ($) {
+/*! SQLSearchWP-Casjobs - v1.0.0 - by:1.0.0 - license: - 2019-06-11 */+function ($) {
   'use strict';
 
   // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
@@ -1378,7 +1378,7 @@
 		
 		targets: {
 		casjobs:{
-		    url:"https://skyserver.sdss.org/casjobs/RestAPI/contexts/dr14/query",
+		    url:"https://skyserver.sdss.org/casjobs/RestAPI/contexts/dr15/query",
 		    ContentType:"application/json",
 		    type: "POST",
 		    data:{"Query":"","Accept":"application/xml"},
@@ -1403,7 +1403,7 @@
 			// Show the Search Page
 			this.showInstructions( webroot+"includes/" );
 			this.showForm( sqlsearchwp.context , false , true );
-			this.showInitialResults( '<br>Results Empty!<br><br><strong>Check Syntax</strong> or <strong>Submit</strong> to get results' , count);
+			this.showInitialResults( '<br>&iexcl;Resultados Vac&iacute;os!<br><br><strong>Revisar Sintaxis</strong> o <strong>Ingresar</strong> para obtener resultados' , count);
 			
 			// Prevent form submitting/reloading page
 			$(".sqls-form", sqlsearchwp.context).on( "submit" , function( e ){ e.preventDefault(); });
