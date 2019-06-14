@@ -1,4 +1,4 @@
-/*! SQLSearchWP-Casjobs - v1.0.0 - by:1.0.0 - license: - 2019-01-28 */+function ($) {
+/*! SQLSearchWP-Casjobs - v1.0.0 - by:1.0.0 - license: - 2019-06-07 */+function ($) {
   'use strict';
 
   // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
@@ -1378,7 +1378,7 @@
 		
 		targets: {
 		casjobs:{
-		    url:"https://skyserver.sdss.org/casjobs/RestAPI/contexts/dr14/query",
+		    url:"https://skyserver.sdss.org/casjobs/RestAPI/contexts/dr15/query",
 		    ContentType:"application/json",
 		    type: "POST",
 		    data:{"Query":"","Accept":"application/xml"},
